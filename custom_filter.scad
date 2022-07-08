@@ -197,7 +197,7 @@ module filter_top() {
     difference() {
         union() {
             // part that overlaps with the whole frame
-            intersection(){
+            intersection() {
                 custom_filter();
                 custom_filter_top_cutout();
             }
@@ -209,6 +209,9 @@ module filter_top() {
             // left/right lips
             translate([lip_offset,lip_offset,lip_height_offset]) cube([lip_thickness,lip_depth,lip_height]);
             translate([filter_width-lip_thickness-lip_offset,lip_offset,lip_height_offset]) cube([lip_thickness,lip_depth,lip_height]);
+
+            // tab to make it easier to lift
+            translate([0,filter_depth/8,filter_height-filter_wall_thickness]) cylinder(r=filter_wall_thickness,h=filter_wall_thickness,$fn=360);
         }
 
         // cut outs for the magnet cavities
@@ -222,7 +225,6 @@ module filter_top() {
         translate([filter_width-lip_offset,0,lip_height_offset]) cube([lip_offset,filter_depth,lip_height-filter_wall_thickness]);
     }    
 }
-
 
 if (render_spacer){
     spacer();
