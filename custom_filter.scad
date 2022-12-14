@@ -5,6 +5,8 @@ render_spacer=false;
 render_filter=false;
 // render the filter cartridge top
 render_filter_top=false;
+// template for filter medium
+render_filter_medium_template=false;
 
 render_ghost=false;
 
@@ -375,6 +377,46 @@ module filter_top() {
     }    
 }
 
+module filter_medium_template(){
+    cavity_offset = 2*filter_wall_thickness;
+    shrink_offset = 10;
+    difference() {
+        translate([
+            filter_wall_thickness+(shrink_offset/2), 
+            filter_wall_thickness+(shrink_offset/2), 
+            filter_wall_thickness])
+        cube([
+            filter_width-cavity_offset-shrink_offset, 
+            filter_depth-cavity_offset-shrink_offset, 
+            2
+        ]);
+
+        if(filter_magnets_corners) {
+            for (coord = magnet_locations_corners)
+                custom_filter_magnet_support(coord.x, coord.y);
+        }
+
+        if (filter_magnets_middle) {
+            for (coord = magnet_locations_middles)
+                custom_filter_magnet_support(coord.x, coord.y);
+        }
+
+        center_offset=((filter_width-cavity_offset-shrink_offset)/4)/2;
+        cutout_offset=filter_wall_thickness+(shrink_offset/2)+center_offset;
+        cutout_additional_offset=cutout_offset+20;
+        translate([cutout_offset, cutout_offset, 2]){
+            cube([(filter_width-cavity_offset-shrink_offset)/3, (filter_depth-cavity_offset-shrink_offset)/3, 5]);
+            translate([cutout_additional_offset,0,0]) cube([(filter_width-cavity_offset-shrink_offset)/3, (filter_depth-cavity_offset-shrink_offset)/3, 5]);
+            translate([0,cutout_additional_offset,0]) cube([(filter_width-cavity_offset-shrink_offset)/3, (filter_depth-cavity_offset-shrink_offset)/3, 5]);
+            translate([cutout_additional_offset,cutout_additional_offset,0]) cube([(filter_width-cavity_offset-shrink_offset)/3, (filter_depth-cavity_offset-shrink_offset)/3, 5]);
+        }
+    }
+
+
+        
+    
+}
+
 if (render_spacer){
     spacer();
 }
@@ -386,6 +428,11 @@ if (render_filter){
 
 if (render_filter_top){
     rotate([180,0,0]) filter_top();
+}
+
+if (render_filter_medium_template)
+{
+    filter_medium_template();
 }
 
 // cavity_offset = 2*filter_wall_thickness;
